@@ -14,16 +14,16 @@ This is a Laravel-based Delivery Management System that assigns delivery boys to
 
 ### Prerequisites
 
-- PHP 8.0 or higher
+- PHP 8.2 or higher
 - Composer
 - MySQL or compatible database
-- Laravel 9.x or 10.x (tested)
+- Laravel 11 
 
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/delivery-management-system.git
-cd delivery-management-system
+git clone https://github.com/ksubodh9/order-management-system.git
+cd order-management-system
 ```
 
 ### Step 2: Install Dependencies
@@ -114,10 +114,14 @@ You can use **Tinker** to interact with the application from the command line:
    $repository->assignOrderToDeliveryBoy(10);
    ```
 
-   If the order is successfully assigned, you'll receive the delivery boy's name:
+   If the order is successfully assigned, you'll receive the delivery boy's name like this:
 
    ```bash
-   => "Delivery Boy C"
+   =>
+   [
+       "status" => true,
+       "message" => "This order has been successfully assigned to Delivery Boy A",
+   ]
    ```
 
    If no delivery boy is available or an error occurs, an exception will be thrown.
@@ -130,7 +134,23 @@ You can use **Tinker** to interact with the application from the command line:
    $repository->isDeliveryBoyFree(1); // Check if delivery boy with ID 1 is available
    ```
 
-   This will return `true` if the delivery boy is available or `false` if they are busy or have reached their capacity.
+   This will return 
+   ```bash
+   =>
+    [                                               
+        "status" => true,                             
+        "message" => "The delivery boy is available.",
+    ]  
+  ```                                             
+    if the delivery boy is available or 
+```bash
+   =>
+    [                                               
+        "status" => true,                             
+        "message" => "The delivery boy is not available.",
+    ]  
+  ```   
+    if they are busy or have reached their capacity.
 
 4. **Get Available Delivery Boy**:
 
@@ -140,7 +160,15 @@ You can use **Tinker** to interact with the application from the command line:
    $availableBoy = $repository->getAvailableDeliveryBoy();
    ```
 
-   If there is an available delivery boy, their details will be returned. If not, you'll get `null`.
+   If there is an available delivery boy, their details will be returned. If not, you'll get 
+   ```bash
+   =>
+    [                                               
+        "status" => true,                             
+        "message" => "There are no available delivery boys. Please try after some time.",
+    ]  
+  ``` 
+   .
 
 ### Example of Handling Errors
 
