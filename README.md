@@ -141,15 +141,17 @@ You can use **Tinker** to interact with the application from the command line:
         "status" => true,                             
         "message" => "The delivery boy is available.",
     ]  
-  ```                                             
-    if the delivery boy is available or 
-```bash
+   ```                                             
+    if the delivery boy is available or.
+
+   ```bash
    =>
     [                                               
         "status" => true,                             
         "message" => "The delivery boy is not available.",
     ]  
-  ```   
+  ``` 
+    
     if they are busy or have reached their capacity.
 
 4. **Get Available Delivery Boy**:
