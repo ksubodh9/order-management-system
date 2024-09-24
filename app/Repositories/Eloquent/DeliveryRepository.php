@@ -35,45 +35,48 @@ class DeliveryRepository implements DeliveryRepositoryInterface
         if (!$order) {
             return [
                 'status' => false,
-                'message' => "The order with this ID $orderId does not exist."
+                'message' => "The order with ID $orderId does not exist."
             ];
         }
-
+    
+        // Check if the order has already been assigned to any delivery boy
+        $existingAssignment = $order->deliveryBoys()->exists();
+        if ($existingAssignment) {
+            return [
+                'status' => false,
+                'message' => "The order ID $orderId has already been assigned to a delivery boy."
+            ];
+        }
+    
         // Get available delivery boy
         $deliveryBoyResponse = $this->getAvailableDeliveryBoy();
-
+    
         if ($deliveryBoyResponse['status'] === true) {
             $deliveryBoy = $deliveryBoyResponse['data'];
-
-            // Check if the order has already been assigned to avoid duplicates
-            if (!$deliveryBoy->orders()->where('order_id', $orderId)->exists()) {
-                try {
-                    // Attach the order with timestamps
-                    $deliveryBoy->orders()->attach($orderId, ['created_at' => now(), 'updated_at' => now()]);
-
-                    // Return success message
-                    return [
-                        'status' => true,
-                        'message' => 'This order has been successfully assigned to ' . $deliveryBoy->name
-                    ];
-
-                } catch (\Illuminate\Database\QueryException $e) {
-                    // Handle foreign key constraint violation or other DB errors
-                    return [
-                        'status' => false,
-                        'message' => "Failed to assign order ID $orderId: " . $e->getMessage()
-                    ];
-                }
-            } else {
+    
+            // Attach the order with timestamps
+            try {
+                $deliveryBoy->orders()->attach($orderId, ['created_at' => now(), 'updated_at' => now()]);
+    
+                // Return success message
+                return [
+                    'status' => true,
+                    'message' => 'Order has been successfully assigned to ' . $deliveryBoy->name
+                ];
+    
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Handle foreign key constraint violation or other DB errors
                 return [
                     'status' => false,
-                    'message' => 'This order has already been assigned to ' . $deliveryBoy->name
+                    'message' => "Failed to assign order ID $orderId: " . $e->getMessage()
                 ];
             }
+    
         } else {
-            return $deliveryBoyResponse; // Return the failure message for unavailable delivery boys
+            return $deliveryBoyResponse; // Return failure message if no delivery boys are available
         }
     }
+    
 
     /**
      * Get an available delivery boy.
